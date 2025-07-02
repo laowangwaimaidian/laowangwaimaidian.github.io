@@ -11,6 +11,7 @@ export const FLAP_VELOCITY = -250; // 鸟上升速度
 export const PIPE_INTERVAL = 1500; // 管道生成间隔（毫秒）
 export const PIPE_GAP = 125; // 上下管道间隙（像素）
 export const PIPE_SPEED = -120; // 管道移动速度
+export const SCORE_DIGIT_WIDTH = 14; // 数字图片宽度
 
 // 资源路径
 export const ASSETS = {

@@ -1,6 +1,6 @@
 // main.js
 // 主入口，创建 Phaser.Game 实例，注册 GameScene
-import { GAME_WIDTH, GAME_HEIGHT, PIPE_INTERVAL, PIPE_GAP, PIPE_SPEED, FLAP_VELOCITY, GRAVITY,ASSETS } from './config.js';
+import { GAME_WIDTH, GAME_HEIGHT, PIPE_INTERVAL, PIPE_GAP, PIPE_SPEED, FLAP_VELOCITY, GRAVITY,ASSETS,SCORE_DIGIT_WIDTH } from './config.js';
 
 //GameScene 类定义,核心游戏场景，包含 “玩游戏” 的所有逻辑,继承 Phaser.Scene 类组织游戏内容
 class GameScene extends Phaser.Scene {
@@ -100,12 +100,13 @@ class GameScene extends Phaser.Scene {
 
     // 添加 logo 和开始按钮
     this.titleImg = this.add.image(this.sys.game.config.width / 2, 120, 'title').setDepth(10);
-    this.playBtn = this.add.image(this.sys.game.config.width / 2, 250, 'buttonPlay').setInteractive().setDepth(10);
+    //设置按钮可交互
+    this.playBtn = this.add.image(this.sys.game.config.width / 2, this.sys.game.config.height / 2, 'buttonPlay').setInteractive().setDepth(10);
     this.playBtn.on('pointerdown', this.startGame, this);
 
     // 游戏结束相关元素（初始隐藏）
-    this.gameOverImg = this.add.image(this.sys.game.config.width / 2, 180, 'textGameOver').setVisible(false).setDepth(10);
-    this.restartBtn = this.add.image(this.sys.game.config.width / 2, 300, 'buttonPlay').setVisible(false).setInteractive().setDepth(10);
+    this.gameOverImg = this.add.image(this.sys.game.config.width / 2, 120, 'textGameOver').setVisible(false).setDepth(10);
+    this.restartBtn = this.add.image(this.sys.game.config.width / 2, this.sys.game.config.height / 2, 'buttonPlay').setVisible(false).setInteractive().setDepth(10);
     this.restartBtn.on('pointerdown', this.restartGame, this);
 
     // 场景重启时恢复物理
@@ -133,11 +134,12 @@ class GameScene extends Phaser.Scene {
     // 先清空旧的分数图片
     this.scoreGroup.clear(true, true);
     const scoreStr = this.score.toString();
-    const digitWidth = 24; // 数字图片宽度
+    const digitWidth = SCORE_DIGIT_WIDTH; // 数字图片宽度
     const totalWidth = digitWidth * scoreStr.length;
     const startX = (this.sys.game.config.width - totalWidth) / 2;
     for (let i = 0; i < scoreStr.length; i++) {
       const num = scoreStr[i];
+      //图片中心点x,y坐标
       const img = this.add.image(startX + i * digitWidth + digitWidth / 2, 60, `num${num}`).setDepth(10);
       this.scoreGroup.add(img);
     }
@@ -253,11 +255,7 @@ class GameScene extends Phaser.Scene {
       );
       this.bird.setVelocityY(FLAP_VELOCITY); // 跳跃
       console.log('velocityY(after):', this.bird.body.velocity.y);
-    } else if (this.state === this.GAME_STATE.READY) {
-      this.startGame();
-    } else if (this.state === this.GAME_STATE.GAMEOVER) {
-      this.restartGame();
-    }
+    } 
   }
 
   handleGameOver() {
