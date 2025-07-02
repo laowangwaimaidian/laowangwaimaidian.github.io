@@ -39,5 +39,10 @@ export const ASSETS = {
     'assets/number_score_07.png',
     'assets/number_score_08.png',
     'assets/number_score_09.png'
-  ]
+  ],
+  //音效
+  flap: 'assets/wing.ogg',
+  hit: 'assets/hit.ogg',
+  point: 'assets/point.ogg',
+  die: 'assets/die.ogg'
 }; 

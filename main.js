@@ -2,7 +2,7 @@
 // 主入口，创建 Phaser.Game 实例，注册 GameScene
 import { GAME_WIDTH, GAME_HEIGHT, PIPE_INTERVAL, PIPE_GAP, PIPE_SPEED, FLAP_VELOCITY, GRAVITY,ASSETS,SCORE_DIGIT_WIDTH } from './config.js';
 
-//GameScene 类定义,核心游戏场景，包含 “玩游戏” 的所有逻辑,继承 Phaser.Scene 类组织游戏内容
+//GameScene 类定义,核心游戏场景，包含 "玩游戏" 的所有逻辑,继承 Phaser.Scene 类组织游戏内容
 class GameScene extends Phaser.Scene {
     //constructor 是类创建实例时自动调用的初始化方法
   constructor() {
@@ -38,11 +38,11 @@ class GameScene extends Phaser.Scene {
       const path = ASSETS.numbers[i];
       this.load.image(key, path);
     }
-    //加载音效
-    // this.load.audio('flap', ASSETS.flap);
-    // this.load.audio('hit', ASSETS.hit);
-    // this.load.audio('point', ASSETS.point);
-    // this.load.audio('die', ASSETS.die);
+    // 加载音效
+    this.load.audio('flap', ASSETS.flap);
+    this.load.audio('hit', ASSETS.hit);
+    this.load.audio('point', ASSETS.point);
+    this.load.audio('die', ASSETS.die);
   }
   create() {
     // 添加背景（tileSprite 可实现循环滚动）
@@ -116,6 +116,14 @@ class GameScene extends Phaser.Scene {
 
     // 确保物理世界有重力
     this.physics.world.gravity.y = GRAVITY;
+
+    // 音效对象
+    this.sfx = {
+      flap: this.sound.add('flap'),
+      hit: this.sound.add('hit'),
+      point: this.sound.add('point'),
+      die: this.sound.add('die')
+    };
 
     // 输入处理（点击/空格），添加调试输出
     this.input.on('pointerdown', () => {
@@ -204,9 +212,10 @@ class GameScene extends Phaser.Scene {
     // 检查管道通过并加分
     this.pipes.getChildren().forEach(pipe => {
       if (!pipe.scored && pipe.texture.key === 'pipeUp' && pipe.x + pipe.width / 2 < this.bird.x) {
-        pipe.scored = true;//标记管道已计分
+        pipe.scored = true;
         this.score++;
         this.updateScoreDisplay();
+        if (this.sfx && this.sfx.point) this.sfx.point.play();
       }
     });
   }
@@ -231,16 +240,8 @@ class GameScene extends Phaser.Scene {
   //空格和点击控制鸟跳跃
   handleInput() {
     if (this.state === this.GAME_STATE.PLAYING) {
-      console.log(
-        'Bird jump!',
-        'velocityY(before):', this.bird.body.velocity.y,
-        'gravity:', this.bird.body.allowGravity,
-        'paused:', this.physics.world.isPaused,
-        'moves:', this.bird.body.moves,
-        'immovable:', this.bird.body.immovable
-      );
       this.bird.setVelocityY(FLAP_VELOCITY); // 跳跃
-      console.log('velocityY(after):', this.bird.body.velocity.y);
+      if (this.sfx && this.sfx.flap) this.sfx.flap.play();
     } 
   }
 
@@ -252,6 +253,11 @@ class GameScene extends Phaser.Scene {
     this.bird.setTint(0xff0000);
     this.gameOverImg.setVisible(true);
     this.restartBtn.setVisible(true);
+    if (this.sfx && this.sfx.hit) this.sfx.hit.play();
+    // 延迟播放die音效，模拟原版效果
+    if (this.sfx && this.sfx.die) {
+      this.time.delayedCall(400, () => { this.sfx.die.play(); });
+    }
   }
 
   restartGame() {
