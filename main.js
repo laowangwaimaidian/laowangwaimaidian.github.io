@@ -20,17 +20,35 @@ class GameScene extends Phaser.Scene {
     this.load.image('buttonPlay', ASSETS.buttonPlay);
     this.load.image('textGameOver', ASSETS.textGameOver);
     // 鸟动画帧
-    this.load.image({
+    this.load.spritesheet({
         key: 'bird0',
         url: ASSETS.bird[0],
+        frameConfig: {
+          frameWidth: 34,
+          frameHeight: 34,
+          margin: 7,
+          spacing: 0
+        }
     });
-    this.load.image({
+    this.load.spritesheet({
         key: 'bird1',
         url: ASSETS.bird[1],
+        frameConfig: {
+          frameWidth: 34,
+          frameHeight: 34,
+          margin: 7,
+          spacing: 0
+        }
     });
-    this.load.image({
+    this.load.spritesheet({
         key: 'bird2',
         url: ASSETS.bird[2],
+        frameConfig: {
+          frameWidth: 34,
+          frameHeight: 34,
+          margin: 7,
+          spacing: 0
+        }
     });
     // 数字图片（0-9）
     for (let i = 0; i <= 9; i++) {
@@ -251,14 +269,12 @@ class GameScene extends Phaser.Scene {
     this.physics.pause();
     if (this.pipeTimer) this.pipeTimer.paused = true;
     this.bird.setTint(0xff0000);
+    if (this.sfx && this.sfx.hit) this.sfx.hit.play();
     this.gameOverImg.setVisible(true);
     this.restartBtn.setVisible(true);
-    if (this.sfx && this.sfx.hit) this.sfx.hit.play();
-    // 延迟播放die音效，模拟原版效果
-    if (this.sfx && this.sfx.die) {
-      this.time.delayedCall(400, () => { this.sfx.die.play(); });
-    }
+    console.log('handleGameOver');
   }
+  
 
   restartGame() {
     // 恢复物理世界
@@ -317,7 +333,7 @@ const config = {
       // 设置重力，y 轴方向为 0，表示游戏开始前不下落
       gravity: { y: 0 }, 
       // 是否开启调试模式，false 表示不开启
-      debug: true
+      debug: false
     }
   },
   scene: [GameScene]
