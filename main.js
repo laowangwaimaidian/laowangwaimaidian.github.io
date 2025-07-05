@@ -153,6 +153,11 @@ class GameScene extends Phaser.Scene {
       this.handleInput();
     }, this);
     console.log('GameScene create end');
+    // 隐藏占位图片
+    const loadingPlaceholder = document.getElementById('loading-placeholder');
+    if (loadingPlaceholder) {
+      loadingPlaceholder.style.display = 'none';
+    }
   }
 
   // 更新分数图片显示（居中）
